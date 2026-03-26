@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import styles from './login.module.css';
+import Image from 'next/image';
 
 export default function Login() {
   const router = useRouter();
@@ -35,10 +36,17 @@ export default function Login() {
     <div className={styles.container}>
       <div className={styles.top}>
         <div className={styles.logo}>
-          <span>⚙️</span>
+          <span>
+             <Image
+                      src="/icons/icon-512.png"
+                      alt="Partes Diarios"
+                      width={100}
+                      height={100}
+                      style={{ borderRadius: 24 }}
+                    />
+          </span>
         </div>
         <h1 className={styles.title}>Partes Diarios</h1>
-        <p className={styles.sub}>Registra tu trabajo fácilmente</p>
       </div>
 
       <form className={styles.form} onSubmit={handleLogin}>

@@ -1,11 +1,11 @@
 {
   "name": "Partes Diarios",
-  "short_name": "Partes",
+  "short_name": "PartesDiarios",
   "description": "Registra tus partes diarios fácilmente",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#1a1a2e",
+  "theme_color": "#2a73f4",
   "orientation": "portrait",
   "icons": [
     {

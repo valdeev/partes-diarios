@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -60,14 +61,23 @@ export default function Dashboard() {
   const horasFormateadas = `${Math.floor(totalHoras / 60)}h ${totalHoras % 60}m`;
 
   if (loading) return (
-    <div style={{
-      minHeight: '100vh', display: 'flex',
-      alignItems: 'center', justifyContent: 'center',
-      background: 'var(--primary)'
-    }}>
-      <div style={{ fontSize: 48 }}>⚙️</div>
-    </div>
-  );
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'var(--primary)'
+        }}>
+          <Image
+            src="/icons/icon-512.png"
+            alt="Partes Diarios"
+            width={100}
+            height={100}
+            style={{ borderRadius: 24 }}
+          />
+        </div>
+    );
 
   const hoy = new Date().toLocaleDateString('pt-PT', {
     weekday: 'long', day: 'numeric', month: 'long'
@@ -86,7 +96,7 @@ export default function Dashboard() {
           <div>
             <p style={{ fontSize: 13, opacity: 0.6, marginBottom: 4, textTransform: 'capitalize' }}>{hoy}</p>
             <h1 style={{ fontSize: 22, fontWeight: 700, letterSpacing: -0.5 }}>
-              Olá, {empleado?.nombre.split(' ')[0]} 👋
+              Olá, {empleado?.nombre.split(' ')[0]} 
             </h1>
             <p style={{ fontSize: 12, opacity: 0.5, marginTop: 4 }}>
               Nº {empleado?.numero_empleado} · {empleado?.area}
@@ -148,14 +158,14 @@ export default function Dashboard() {
             onClick={() => router.push('/resumen')}
             style={{ fontSize: 14 }}
           >
-            📋 Resumo do dia
+             Resumo do dia
           </button>
           <button
             className="btn btn-secondary"
             onClick={() => router.push('/historico')}
             style={{ fontSize: 14 }}
           >
-            📅 Histórico
+             Histórico
           </button>
         </div>
 
@@ -167,7 +177,7 @@ export default function Dashboard() {
 
           {registrosHoy.length === 0 ? (
             <div className="card" style={{ textAlign: 'center', padding: '32px 20px' }}>
-              <div style={{ fontSize: 36, marginBottom: 12 }}>📝</div>
+              <div style={{ fontSize: 36, marginBottom: 12 }}></div>
               <p style={{ color: 'var(--gray)', fontSize: 14 }}>
                 Ainda não tens registos hoje
               </p>

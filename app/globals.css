@@ -1,8 +1,10 @@
 :root {
+  --font-geist: 'Geist', sans-serif;
+  --font-dm: 'DM Sans', sans-serif;
   --bg: #f4f4f8;
   --white: #ffffff;
   --black: #0f0f0f;
-  --primary: #1a1a2e;
+  --primary: #2A73F4;
   --accent: #e94560;
   --accent2: #ff6b6b;
   --success: #2a9d5c;
@@ -28,6 +30,7 @@ html {
 }
 
 body {
+  font-family: var(--font-dm);
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;

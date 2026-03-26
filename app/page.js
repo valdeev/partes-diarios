@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import Image from 'next/image';
 
 export default function Home() {
   const router = useRouter();
@@ -18,14 +19,21 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--primary)'
-    }}>
-      <div style={{ fontSize: 48 }}>⚙️</div>
-    </div>
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--primary)'
+      }}>
+        <Image
+          src="/icons/icon-512.png"
+          alt="Partes Diarios"
+          width={100}
+          height={100}
+          style={{ borderRadius: 24 }}
+        />
+      </div>
   );
 }

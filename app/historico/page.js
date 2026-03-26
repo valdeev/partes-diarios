@@ -67,8 +67,8 @@ export default function Historico() {
   }
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ fontSize: 36 }}>⚙️</div>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--primary)' }}>
+      <div style={{ fontSize: 36 }}></div>
     </div>
   );
 

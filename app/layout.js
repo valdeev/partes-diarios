@@ -1,7 +1,15 @@
-import { Outfit } from 'next/font/google';
+import { Geist, DM_Sans } from 'next/font/google';
 import './globals.css';
 
-const outfit = Outfit({ subsets: ['latin'] });
+const geist = Geist({ 
+  subsets: ['latin'],
+  variable: '--font-geist'
+});
+
+const dmSans = DM_Sans({ 
+  subsets: ['latin'],
+  variable: '--font-dm'
+});
 
 export const metadata = {
   title: 'Partes Diarios',
@@ -24,7 +32,7 @@ export default function RootLayout({ children }) {
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Partes" />
       </head>
-      <body className={outfit.className}>
+      <body className={`${geist.variable} ${dmSans.variable}`}>
         {children}
       </body>
     </html>

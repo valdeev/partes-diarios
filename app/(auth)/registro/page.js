@@ -19,9 +19,8 @@ export default function Registro() {
   const areas = [
     'Pintura',
     'Mecánica',
-    'Metalurgia',
-    'Electricidad',
-    'Soldadura',
+    'Serralheria',
+    'Electrica',
     'Otro',
   ];
 
