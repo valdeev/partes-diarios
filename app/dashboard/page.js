@@ -88,6 +88,8 @@ export default function Dashboard() {
 
       {/* HEADER */}
       <div style={{
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
         background: 'var(--primary)',
         padding: '48px 24px 32px',
         color: 'white',

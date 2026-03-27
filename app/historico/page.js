@@ -85,7 +85,7 @@ export default function Historico() {
         display: 'flex', alignItems: 'center', gap: 16
       }}>
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/dashboard')}
           style={{
             background: 'rgba(255,255,255,0.1)', border: 'none',
             borderRadius: 10, width: 36, height: 36,
@@ -191,9 +191,20 @@ export default function Historico() {
                       <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                         {r.descripcion}
                       </div>
+                      <button
+                      onClick={() => router.push(`/editar-registro/${r.id}`)}
+                      style={{
+                        width: '100%', padding: '8px',
+                        background: 'var(--gray2)', color: 'var(--text)',
+                        border: 'none', borderRadius: 8,
+                        fontSize: 13, fontWeight: 600,
+                        cursor: 'pointer', marginTop: 8
+                      }}
+                    >
+                      ✏️ Editar registo
+                    </button>
                     </div>
                   ))}
-
                   {/* Botón ver resumen completo */}
                   <button
                     onClick={() => router.push(`/resumen?fecha=${fecha}`)}

@@ -113,25 +113,6 @@ export default function Resumo() {
           </div>
         </div>
 
-        {/* Alerta horas */}
-        {totalMinutos < 480 && registros.length > 0 && (
-          <div style={{
-            background: '#fff8ee', border: '1px solid #f4a261',
-            borderRadius: 12, padding: '14px 16px',
-            display: 'flex', gap: 10, alignItems: 'center'
-          }}>
-            <span style={{ fontSize: 20 }}>⚠️</span>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#c17a2a' }}>
-                Menos de 8 horas registadas
-              </div>
-              <div style={{ fontSize: 12, color: '#c17a2a', opacity: 0.8, marginTop: 2 }}>
-                O total tem de ser 8h para o parte diário
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Tabla registros */}
         <div>
           <h2 style={{

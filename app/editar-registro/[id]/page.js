@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
-export default function NovoRegistro() {
+export default function EditarRegistro() {
   const router = useRouter();
-  const [empleado, setEmpleado] = useState(null);
+  const { id } = useParams();
   const [ordenes, setOrdenes] = useState([]);
   const [busqueda, setBusqueda] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [guardando, setGuardando] = useState(false);
   const [form, setForm] = useState({
     orden_id: '',
     orden_texto: '',
@@ -19,13 +20,6 @@ export default function NovoRegistro() {
     fecha: new Date().toISOString().split('T')[0],
   });
 
-  const descripciones_favoritas = [
-    'Pintura e decapagem',
-    'Preparação de superfície',
-    'Lixagem',
-    'Limpeza',
-  ];
-
   useEffect(() => {
     cargarDatos();
   }, []);
@@ -34,14 +28,25 @@ export default function NovoRegistro() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { router.push('/login'); return; }
 
-    const { data: perfil } = await supabase
-      .from('empleados')
-      .select('*')
-      .eq('id', session.user.id)
+    // Cargar registro existente
+    const { data: registro } = await supabase
+      .from('registros')
+      .select('*, ordenes(id, descripcion, numero)')
+      .eq('id', id)
       .single();
 
-    setEmpleado(perfil);
+    if (!registro) { router.push('/historico'); return; }
 
+    setForm({
+      orden_id: registro.orden_id,
+      orden_texto: `${registro.ordenes.numero} — ${registro.ordenes.descripcion}`,
+      descripcion: registro.descripcion,
+      hora_inicio: registro.hora_inicio.slice(0, 5),
+      hora_fin: registro.hora_fin.slice(0, 5),
+      fecha: registro.fecha,
+    });
+
+    // Cargar órdenes
     const { data: ords } = await supabase
       .from('ordenes')
       .select('*')
@@ -49,6 +54,7 @@ export default function NovoRegistro() {
       .order('created_at', { ascending: false });
 
     setOrdenes(ords || []);
+    setLoading(false);
   }
 
   const ordenesFiltradas = ordenes.filter(o =>
@@ -63,34 +69,48 @@ export default function NovoRegistro() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!form.orden_id) {
-      alert('Selecciona una orden');
-      return;
-    }
-    setLoading(true);
-
-    const { data: { session } } = await supabase.auth.getSession();
+    if (!form.orden_id) { alert('Seleciona uma ordem'); return; }
+    setGuardando(true);
 
     const { error } = await supabase
       .from('registros')
-      .insert({
-        empleado_id: session.user.id,
+      .update({
         orden_id: form.orden_id,
-        area: empleado.area,
         descripcion: form.descripcion,
         hora_inicio: form.hora_inicio,
         hora_fin: form.hora_fin,
         fecha: form.fecha,
-      });
+      })
+      .eq('id', id);
 
     if (error) {
-      alert('Error al guardar. Intenta de nuevo.');
-      setLoading(false);
+      alert('Erro ao guardar. Tenta de novo.');
+      setGuardando(false);
       return;
     }
 
-    router.push('/dashboard');
+    router.push('/historico');
   }
+
+  async function handleEliminar() {
+    const confirmar = confirm('Tens a certeza que queres eliminar este registo?');
+    if (!confirmar) return;
+
+    const { error } = await supabase
+      .from('registros')
+      .delete()
+      .eq('id', id);
+
+    if (error) { alert('Erro ao eliminar.'); return; }
+
+    router.push('/historico');
+  }
+
+  if (loading) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ fontSize: 36 }}></div>
+    </div>
+  );
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
@@ -100,23 +120,64 @@ export default function NovoRegistro() {
         background: 'var(--primary)',
         padding: '48px 24px 24px',
         color: 'white',
-        display: 'flex', alignItems: 'center', gap: 16
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between'
       }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <button
+            onClick={() => router.back()}
+            style={{
+              background: 'rgba(255,255,255,0.1)', border: 'none',
+              borderRadius: 10, width: 36, height: 36,
+              color: 'white', fontSize: 18, cursor: 'pointer'
+            }}
+          >
+            ←
+          </button>
+          <h1 style={{ fontSize: 20, fontWeight: 700 }}>Editar registo</h1>
+        </div>
         <button
-          onClick={() => router.back()}
-          style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 10, width: 36, height: 36, color: 'white', fontSize: 18, cursor: 'pointer' }}
+          onClick={handleEliminar}
+          style={{
+            background: 'var(--accent)',
+            border: '1px solid rgba(233,69,96,0.5)',
+            borderRadius: 10, padding: '8px 14px',
+            color: 'white', fontSize: 13,
+            fontWeight: 600, cursor: 'pointer'
+          }}
         >
-          ←
+          Eliminar
         </button>
-        <h1 style={{ fontSize: 20, fontWeight: 700 }}>Novo registo</h1>
       </div>
 
       <form onSubmit={handleSubmit} style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-        {/* Buscar orden */}
+        {/* Fecha */}
+        <div className="card">
+          <label className="label">Data do registo</label>
+          <input
+            className="input"
+            type="date"
+            value={form.fecha}
+            max={new Date().toISOString().split('T')[0]}
+            onChange={e => setForm({ ...form, fecha: e.target.value })}
+            required
+          />
+          {form.fecha !== new Date().toISOString().split('T')[0] && (
+            <div style={{
+              marginTop: 8, padding: '8px 12px',
+              background: '#fff8ee', borderRadius: 8,
+              fontSize: 12, color: '#c17a2a',
+              display: 'flex', alignItems: 'center', gap: 6
+            }}>
+              ⚠️ Estás a editar um registo de um dia anterior
+            </div>
+          )}
+        </div>
+
+        {/* Orden */}
         <div className="card">
           <label className="label">Ordem de trabalho</label>
-
           {form.orden_id ? (
             <div style={{
               background: 'var(--gray2)', borderRadius: 12,
@@ -143,11 +204,10 @@ export default function NovoRegistro() {
                 value={busqueda}
                 onChange={e => setBusqueda(e.target.value)}
               />
-
               {busqueda.length > 0 && (
                 <div style={{
-                  marginTop: 8, borderRadius: 12, overflow: 'hidden',
-                  border: '1px solid var(--border)'
+                  marginTop: 8, borderRadius: 12,
+                  overflow: 'hidden', border: '1px solid var(--border)'
                 }}>
                   {ordenesFiltradas.length === 0 ? (
                     <div style={{ padding: '14px 16px', color: 'var(--gray)', fontSize: 14 }}>
@@ -172,45 +232,11 @@ export default function NovoRegistro() {
                         <div style={{ fontSize: 14, fontWeight: 500, marginTop: 2 }}>
                           {o.descripcion}
                         </div>
-                        {o.ingeniero && (
-                          <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
-                            Eng. {o.ingeniero}
-                          </div>
-                        )}
                       </button>
                     ))
                   )}
                 </div>
               )}
-
-              {ordenes.length === 0 && busqueda.length === 0 && (
-                <p style={{ fontSize: 13, color: 'var(--gray)', marginTop: 8 }}>
-                  Ainda não há ordens ativas.
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-
-                {/* Fecha */}
-        <div className="card">
-          <label className="label">Data do registo</label>
-          <input
-            className="input"
-            type="date"
-            value={form.fecha}
-            max={new Date().toISOString().split('T')[0]}
-            onChange={e => setForm({ ...form, fecha: e.target.value })}
-            required
-          />
-          {form.fecha !== new Date().toISOString().split('T')[0] && (
-            <div style={{
-              marginTop: 8, padding: '8px 12px',
-              background: '#fff8ee', borderRadius: 8,
-              fontSize: 12, color: '#c17a2a',
-              display: 'flex', alignItems: 'center', gap: 6
-            }}>
-              ⚠️ Estás a registar para um dia anterior
             </div>
           )}
         </div>
@@ -218,28 +244,9 @@ export default function NovoRegistro() {
         {/* Descripción */}
         <div className="card">
           <label className="label">Descrição do trabalho</label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
-            {descripciones_favoritas.map(d => (
-              <button
-                key={d}
-                type="button"
-                onClick={() => setForm({ ...form, descripcion: d })}
-                style={{
-                  padding: '10px 14px', borderRadius: 10, fontSize: 13,
-                  textAlign: 'left', cursor: 'pointer',
-                  background: form.descripcion === d ? 'var(--accent)' : 'var(--gray2)',
-                  color: form.descripcion === d ? 'white' : 'var(--text)',
-                  border: 'none', fontWeight: form.descripcion === d ? 600 : 400,
-                  transition: 'all 0.15s'
-                }}
-              >
-                {d}
-              </button>
-            ))}
-          </div>
           <input
             className="input"
-            placeholder="Ou escreve uma descrição..."
+            placeholder="Descreve o trabalho realizado..."
             value={form.descripcion}
             onChange={e => setForm({ ...form, descripcion: e.target.value })}
             required
@@ -257,7 +264,6 @@ export default function NovoRegistro() {
                 type="time"
                 value={form.hora_inicio}
                 onChange={e => setForm({ ...form, hora_inicio: e.target.value })}
-                step="60"
                 required
               />
             </div>
@@ -268,7 +274,6 @@ export default function NovoRegistro() {
                 type="time"
                 value={form.hora_fin}
                 onChange={e => setForm({ ...form, hora_fin: e.target.value })}
-                step="60"
                 required
               />
             </div>
@@ -278,10 +283,10 @@ export default function NovoRegistro() {
         <button
           className="btn btn-primary"
           type="submit"
-          disabled={loading}
+          disabled={guardando}
           style={{ fontSize: 16, padding: '18px' }}
         >
-          {loading ? 'A guardar...' : '✓ Guardar registo'}
+          {guardando ? 'A guardar...' : '✓ Guardar alterações'}
         </button>
 
       </form>

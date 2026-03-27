@@ -24,7 +24,7 @@ export default function Login() {
     });
 
     if (error) {
-      setError('Email o contraseña incorrectos');
+      setError('E-mail ou palavra-passe incorretos');
       setLoading(false);
       return;
     }
@@ -63,7 +63,7 @@ export default function Login() {
         </div>
 
         <div className="form-group">
-          <label className="label">Contraseña</label>
+          <label className="label">Palavra-passe</label>
           <input
             className="input"
             type="password"
@@ -90,7 +90,7 @@ export default function Login() {
           style={{ marginTop: 12 }}
           onClick={() => router.push('/registro')}
         >
-          Crear cuenta
+          Criar conta
         </button>
       </form>
     </div>

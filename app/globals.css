@@ -113,10 +113,10 @@ a {
   transition: border-color 0.2s;
 }
 
-.input:focus {
-  border-color: var(--accent);
+/* .input:focus {
+  border-color: var(--primary);
   background: var(--white);
-}
+} */
 
 .label {
   font-size: 12px;

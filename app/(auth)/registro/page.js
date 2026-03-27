@@ -56,7 +56,7 @@ export default function Registro() {
       });
 
     if (profileError) {
-      setError('Error al crear perfil. Intenta de nuevo.');
+      setError('Erro ao criar o perfil. Tente novamente.');
       setLoading(false);
       return;
     }
@@ -82,10 +82,10 @@ export default function Registro() {
 
       <form onSubmit={handleRegistro} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <div className="form-group">
-          <label className="label">Nombre completo</label>
+          <label className="label">Nome completo</label>
           <input
             className="input"
-            name="nombre"
+            name="nome"
             placeholder="João Silva"
             value={form.nombre}
             onChange={handleChange}
@@ -94,7 +94,7 @@ export default function Registro() {
         </div>
 
         <div className="form-group">
-          <label className="label">Número de empleado</label>
+          <label className="label">Número de trabalhador</label>
           <input
             className="input"
             name="numero_empleado"
@@ -106,7 +106,7 @@ export default function Registro() {
         </div>
 
         <div className="form-group">
-          <label className="label">Área de trabajo</label>
+          <label className="label">Área de trabalho</label>
           <select
             className="input"
             name="area"
@@ -114,7 +114,7 @@ export default function Registro() {
             onChange={handleChange}
             required
           >
-            <option value="">Selecciona tu área</option>
+            <option value="">Selecione a sua área</option>
             {areas.map(a => (
               <option key={a} value={a}>{a}</option>
             ))}
@@ -135,7 +135,7 @@ export default function Registro() {
         </div>
 
         <div className="form-group">
-          <label className="label">Contraseña</label>
+          <label className="label">Palavra-passe</label>
           <input
             className="input"
             type="password"
